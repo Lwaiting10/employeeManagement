@@ -6,6 +6,7 @@ import com.iweb.Util.ShowUtil;
 import com.iweb.Util.TransformUtil;
 import com.iweb.entity.Employee;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -22,7 +23,7 @@ public class EmployeeView {
     /**
      * 员工管理界面
      */
-    public static void mainView() {
+    public static void mainView() throws IOException {
         log("===================员工管理===================");
         while (true) {
             log("请输入您要操作的功能序号：");
@@ -100,7 +101,7 @@ public class EmployeeView {
      *
      * @return 返回服务器匹配的用户对象, 没有匹配的返回null
      */
-    private static Employee getEmployeeFromServer() {
+    private static Employee getEmployeeFromServer() throws IOException {
         int inputId = ScannerUtil.getId();
         // 将员工id发送给服务器
         CommunicationUtil.send(String.valueOf(inputId));
@@ -119,7 +120,7 @@ public class EmployeeView {
     /**
      * 删除员工信息
      */
-    private static void deleteEmployeeView() {
+    private static void deleteEmployeeView() throws IOException {
         log("根据提示输入要删除的对象");
         // 获取要操作的对象
         Employee employee = getEmployeeFromServer();
@@ -136,7 +137,7 @@ public class EmployeeView {
     /**
      * 更新员工信息
      */
-    private static void updateEmployeeView() {
+    private static void updateEmployeeView() throws IOException {
         log("根据提示输入要更改的对象");
         Employee employee = getEmployeeFromServer();
         if (employee == null) {

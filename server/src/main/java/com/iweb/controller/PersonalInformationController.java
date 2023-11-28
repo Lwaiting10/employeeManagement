@@ -19,7 +19,6 @@ import java.net.Socket;
  */
 public class PersonalInformationController {
     public static void personalInformationManage(Socket socket, User user) throws IOException {
-        System.out.println("用户：" + user.getUsername() + "登入了系统！");
         while (true) {
             String key = CommunicationUtil.receive(socket);
             if (key == null) {

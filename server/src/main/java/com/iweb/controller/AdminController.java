@@ -1,5 +1,6 @@
 package com.iweb.controller;
 
+import com.iweb.Server;
 import com.iweb.Util.CommunicationUtil;
 import com.iweb.entity.User;
 
@@ -13,7 +14,7 @@ import java.net.Socket;
  */
 public class AdminController {
     public static void adminController(Socket socket, User user) throws IOException {
-        System.out.println("管理员：" + user.getUsername() + "登入了系统！");
+        System.out.println("管理员:" + user.getUsername() + "登入了系统！");
         while (true) {
             String key = CommunicationUtil.receive(socket);
             if (key == null) {

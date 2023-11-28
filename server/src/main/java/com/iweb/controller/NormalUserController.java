@@ -1,5 +1,6 @@
 package com.iweb.controller;
 
+import com.iweb.Server;
 import com.iweb.Util.CommunicationUtil;
 import com.iweb.entity.User;
 
@@ -13,7 +14,8 @@ import java.net.Socket;
 public class NormalUserController {
 
     public static void normalUserController(Socket socket, User user) throws IOException {
+        System.out.println("用户:" + user.getUsername() + "登入了系统！");
         // 跳转个人信息管理界面
-        PersonalInformationController.personalInformationManage(socket,user);
+        PersonalInformationController.personalInformationManage(socket, user);
     }
 }

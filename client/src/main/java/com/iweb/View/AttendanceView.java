@@ -6,6 +6,7 @@ import com.iweb.Util.ShowUtil;
 import com.iweb.Util.TransformUtil;
 import com.iweb.entity.Attendance;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import static com.iweb.Util.PrintUtil.log;
  * @date 28/11/2023 下午2:42
  */
 public class AttendanceView {
-    public static void mainView() {
+    public static void mainView() throws IOException {
         log("===================考勤管理===================");
         while (true) {
             log("0 - 退出");
@@ -57,7 +58,7 @@ public class AttendanceView {
     /**
      * 查找所有的页面
      */
-    private static void selectAllView() {
+    private static void selectAllView() throws IOException {
         // 接收服务器数据
         List<Attendance> attendances = TransformUtil.getAttendanceList(CommunicationUtil.receive());
         // 打印信息
@@ -67,7 +68,7 @@ public class AttendanceView {
     /**
      * 根据员工id查找页面
      */
-    private static void selectByEmpIdView() {
+    private static void selectByEmpIdView() throws IOException {
         // 发送要查询的员工id信息
         CommunicationUtil.send(String.valueOf(ScannerUtil.getId()));
         // 接收服务器反馈
@@ -79,7 +80,7 @@ public class AttendanceView {
     /**
      * 新增页面
      */
-    private static void insertView() {
+    private static void insertView() throws IOException {
         // TODO: 28/11/2023 做相应的限制管理
         // 获取添加页面的输入的考勤信息 并 将新增信息发给服务器
         log("输入新增考勤信息:");
@@ -95,7 +96,7 @@ public class AttendanceView {
     /**
      * 删除页面
      */
-    private static void deleteView() {
+    private static void deleteView() throws IOException {
         log("输入要删除的员工id:");
         // 发送需要删除的员工id
         CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
@@ -117,7 +118,7 @@ public class AttendanceView {
     /**
      * 更改信息页面
      */
-    private static void updateView() {
+    private static void updateView() throws IOException {
         log("输入要更改信息的员工id:");
         // 发送需要更改信息的员工id
         CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));

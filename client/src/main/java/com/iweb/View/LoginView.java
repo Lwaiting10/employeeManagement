@@ -6,6 +6,7 @@ import com.iweb.Util.DataUtil;
 import com.iweb.Util.TransformUtil;
 import com.iweb.entity.User;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import static com.iweb.Util.PrintUtil.log;
@@ -18,7 +19,7 @@ import static com.iweb.Util.PrintUtil.log;
 public class LoginView {
     private final static Scanner SCANNER = new Scanner(System.in);
 
-    public static void mainView() {
+    public static void mainView() throws IOException {
         log("欢迎来到用户登录系统");
         log("================");
         while (true) {
@@ -39,6 +40,10 @@ public class LoginView {
                     // 登录失败
                     if ("false".equals(message)) {
                         log("用户名或密码错误！");
+                    }
+                    // TODO: 28/11/2023 重复登录处理
+                    else if ("login".equals(message)) {
+                        log("该账号已经登录！");
                     } else {
                         // 登录成功
                         // 获取登陆的用户对象

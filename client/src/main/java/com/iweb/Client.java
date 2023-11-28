@@ -3,7 +3,10 @@ package com.iweb;
 import com.iweb.Util.DataUtil;
 import com.iweb.View.LoginView;
 
+import java.io.IOException;
 import java.net.Socket;
+
+import static com.iweb.Util.PrintUtil.log;
 
 
 /**
@@ -17,7 +20,7 @@ public class Client {
             DataUtil.socket = new Socket(ip, 8888);
             LoginView.mainView();
         } catch (Exception e) {
-            e.printStackTrace();
+            log("服务器已关闭!");
         }
     }
 }

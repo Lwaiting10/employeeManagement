@@ -5,6 +5,7 @@ import com.iweb.entity.Attendance;
 import com.iweb.entity.Employee;
 import com.iweb.entity.Salary;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import static com.iweb.Util.PrintUtil.log;
@@ -19,7 +20,7 @@ public class PersonalVew {
     /**
      * 个人信息管理界面
      */
-    public static void manageView() {
+    public static void manageView() throws IOException {
         log("===================个人信息管理===================");
         while (true) {
             log("0 - 退出");
@@ -45,7 +46,7 @@ public class PersonalVew {
     /**
      * 更改密码页面
      */
-    private static void changePasswordView() {
+    private static void changePasswordView() throws IOException {
         log("输入原密码:");
         // 发送原密码进行匹配
         CommunicationUtil.send(ScannerUtil.getPassword());
@@ -69,7 +70,7 @@ public class PersonalVew {
     /**
      * 展示个人信息
      */
-    private static void informationView() {
+    private static void informationView() throws IOException {
         while (true) {
             log("0 - 退出");
             log("1 - 查看员工信息");

@@ -12,33 +12,22 @@ import static com.iweb.Util.PrintUtil.log;
 public class CommunicationUtil {
     private final static Scanner SCANNER = new Scanner(System.in);
 
-    public static boolean send(String message) {
-        try {
-            OutputStream os = DataUtil.socket.getOutputStream();
-            DataOutputStream dos = new DataOutputStream(os);
-            dos.writeUTF(message);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public static void send(String message) throws IOException {
+        OutputStream os = DataUtil.socket.getOutputStream();
+        DataOutputStream dos = new DataOutputStream(os);
+        dos.writeUTF(message);
     }
 
-    public static String receive() {
-        try {
-            InputStream is = DataUtil.socket.getInputStream();
-            DataInputStream dis = new DataInputStream(is);
-            return dis.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static String receive() throws IOException {
+        InputStream is = DataUtil.socket.getInputStream();
+        DataInputStream dis = new DataInputStream(is);
+        return dis.readUTF();
     }
 
     /**
      * 选择选项并且接收服务器发来的页面跳转信息
      */
-    public static String chooseAndGetMessage() {
+    public static String chooseAndGetMessage() throws IOException {
         String message;
         while (true) {
             String choose = SCANNER.nextLine();
@@ -54,7 +43,7 @@ public class CommunicationUtil {
         }
     }
 
-    public static void deleteConfirm() {
+    public static void deleteConfirm() throws IOException {
         while (true) {
             log("确定要删除吗？(y/n)");
             switch (SCANNER.nextLine()) {

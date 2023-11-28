@@ -1,10 +1,8 @@
 package com.iweb.View;
 
 import com.iweb.Util.*;
-import com.iweb.entity.Employee;
 
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
 import java.util.Scanner;
 
 import static com.iweb.Util.PrintUtil.log;
@@ -16,7 +14,7 @@ import static com.iweb.Util.PrintUtil.log;
 public class AdminView {
     private final static Scanner SCANNER = new Scanner(System.in);
 
-    public static void userInfoView() {
+    public static void userInfoView() throws IOException {
         log("欢迎管理员," + DataUtil.user.getUsername() + "!");
         while (true) {
             log("请输入您要操作的功能序号：");
