@@ -18,8 +18,6 @@ import static com.iweb.Util.PrintUtil.log;
  * @date 28/11/2023 下午2:55
  */
 public class EmployeeView {
-    private final static Scanner SCANNER = new Scanner(System.in);
-
     /**
      * 员工管理界面
      */
@@ -34,65 +32,105 @@ public class EmployeeView {
             log("4 - 添加员工");
             log("5 - 更改员工信息");
             log("6 - 删除员工");
-            String message = CommunicationUtil.chooseAndGetMessage();
             // 0 - 退出
-            if ("exit".equals(message)) {
-                return;
-            }
-            // 1 - 查看所有员工
-            if ("allEmployee".equals(message)) {
-                // 接收服务器传来的员工信息并转成对象集合
-                List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
-                // 展示信息
-                ShowUtil.showEmployee(employees);
-            }
-            // 2 - 根据姓名查找员工
-            if ("selectEmployeeByName".equals(message)) {
-                // 获取要查询的员工姓名
-                String name = selectEmployeeByNameView();
-                // 将信息传给服务器
-                CommunicationUtil.send(name);
-                // 接收服务器传来的员工信息并转成对象集合
-                List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
-                // 展示信息
-                ShowUtil.showEmployee(employees);
-            }
-            // 3 - 根据部门查找员工
-            if ("selectEmployeeByDepartment".equals(message)) {
-                // 获取要查询的员工部门
-                String department = selectEmployeeByDepartmentView();
-                // 将信息传给服务器
-                CommunicationUtil.send(department);
-                // 接收服务器传来的员工信息并转成对象集合
-                List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
-                // 展示信息
-                ShowUtil.showEmployee(employees);
-            }
-            // 4 - 添加员工
-            if ("insertEmployee".equals(message)) {
-                // 获取新增员工的对象
-                Employee employee = insertEmployeeView();
-                // 将新增员工对象发送给服务器
-                CommunicationUtil.send(employee.toString());
-                // 获取服务器反馈
-                message = CommunicationUtil.receive();
-                if ("success".equals(message)) {
-                    log("新增员工成功！");
+            switch (CommunicationUtil.chooseAndGetMessage()) {
+                case "exit":
+                    return;
+                // 1 - 查看所有员工
+                case "selectAll": {
+                    selectAll();
+                    break;
                 }
-                if ("fail".equals(message)) {
-                    log("新增员工失败,已存在同id员工！");
+                // 2 - 根据姓名查找员工
+                case "selectByName": {
+                    selectByName();
+                    break;
+                }
+                // 3 - 根据部门查找员工
+                case "selectByDepartment": {
+                    selectByDepartment();
+                    break;
+                }
+                // 4 - 添加员工
+                case "insert": {
+                    insertView();
+                    break;
+                }
+                // 5 - 更改员工信息
+                case "update": {
+                    // 跳转更新员工信息页面
+                    updateEmployeeView();
+                    break;
+                }
+                // 6 - 删除员工
+                case "delete": {
+                    // 跳转删除员工信息界面
+                    deleteEmployeeView();
+                    break;
                 }
             }
-            // 5 - 更改员工信息
-            if ("updateEmployee".equals(message)) {
-                // 跳转更新员工信息页面
-                updateEmployeeView();
-            }
-            // 6 - 删除员工
-            if ("deleteEmployee".equals(message)) {
-                // 跳转删除员工信息界面
-                deleteEmployeeView();
-            }
+        }
+    }
+
+    /**
+     * 查看所有员工
+     */
+    private static void selectAll() throws IOException {
+        // 接收服务器传来的员工信息并转成对象集合
+        List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
+        // 展示信息
+        ShowUtil.showEmployee(employees);
+    }
+
+    /**
+     * 根据姓名查找员工
+     */
+    private static void selectByName() throws IOException {
+        // 获取要查询的员工姓名
+        String name = ScannerUtil.getName();
+        // 将信息传给服务器
+        CommunicationUtil.send(name);
+        // 接收服务器传来的员工信息并转成对象集合
+        List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
+        // 展示信息
+        ShowUtil.showEmployee(employees);
+    }
+
+    /**
+     * 根据部门查找员工
+     */
+    private static void selectByDepartment() throws IOException {
+        // 获取要查询的员工部门
+        String department = ScannerUtil.getDepartment();
+        // 将信息传给服务器
+        CommunicationUtil.send(department);
+        // 接收服务器传来的员工信息并转成对象集合
+        List<Employee> employees = TransformUtil.getEmployeeList(CommunicationUtil.receive());
+        // 展示信息
+        ShowUtil.showEmployee(employees);
+    }
+
+    /**
+     * 添加员工
+     */
+    private static void insertView() throws IOException {
+        // 获取新增员工的对象
+        // 将新增员工对象发送给服务器
+        CommunicationUtil.send(getInsertEmployee().toString());
+        // 获取服务器反馈
+        switch (CommunicationUtil.receive()) {
+            case "success":
+                log("新增员工成功！");
+                break;
+            case "repeat":
+                log("新增员工失败,已存在同id员工！");
+                break;
+            case "fail":
+                log("新增失败!");
+                break;
+            case "wrong":
+                log("数据出错!");
+                break;
         }
     }
 
@@ -130,6 +168,7 @@ public class EmployeeView {
         }
         log("要删除的员工信息如下：");
         ShowUtil.showEmployee(employee);
+        log("提醒:删除员工信息，同时其相关信息也会一并删除：工资信息、考勤信息以及用户信息等!");
         // 删除确认操作
         CommunicationUtil.deleteConfirm();
     }
@@ -147,32 +186,22 @@ public class EmployeeView {
         log("要修改的员工原信息如下：");
         ShowUtil.showEmployee(employee);
         log("输入修改后的信息:");
-        if (employee != null) {
-            employee.setName(ScannerUtil.getName());
-            employee.setGender(ScannerUtil.getGender());
-            employee.setDepartment(ScannerUtil.getDepartment());
-            employee.setHireDate(ScannerUtil.getHireDate());
-            employee.setBirthday(ScannerUtil.getBirthday());
-            // 将修改后的员工信息发送给服务器
-            CommunicationUtil.send(employee.toString());
-            // 接收服务反馈信息
-            if ("true".equals(CommunicationUtil.receive())) {
-                log("更该成功！");
-            } else {
-                log("更改失败！");
-            }
+        employee.setName(ScannerUtil.getName());
+        employee.setGender(ScannerUtil.getGender());
+        employee.setDepartment(ScannerUtil.getDepartment());
+        employee.setHireDate(ScannerUtil.getHireDate());
+        employee.setBirthday(ScannerUtil.getBirthday());
+        // 将修改后的员工信息发送给服务器
+        CommunicationUtil.send(employee.toString());
+        // 接收服务反馈信息
+        if ("true".equals(CommunicationUtil.receive())) {
+            log("更该成功！");
+        } else {
+            log("更改失败！");
         }
     }
 
-    private static String selectEmployeeByNameView() {
-        return ScannerUtil.getName();
-    }
-
-    private static String selectEmployeeByDepartmentView() {
-        return ScannerUtil.getDepartment();
-    }
-
-    private static Employee insertEmployeeView() {
+    private static Employee getInsertEmployee() {
         log("输入新增员工信息:");
         int inputId = ScannerUtil.getId();
         String inputName = ScannerUtil.getName();

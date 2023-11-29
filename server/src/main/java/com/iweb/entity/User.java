@@ -28,6 +28,10 @@ public class User {
         this.password = password;
     }
 
+    public User(int username) {
+        this.username = username;
+    }
+
     /**
      * 用于登录验证
      *

@@ -48,7 +48,7 @@ public class AttendanceService {
     /**
      * 删除信息
      */
-    public static boolean deleteAttendance(int id) {
-        return attendanceDAO.delete(id);
+    public static boolean deleteAttendance(int empId) {
+        return attendanceDAO.delete(empId);
     }
 }

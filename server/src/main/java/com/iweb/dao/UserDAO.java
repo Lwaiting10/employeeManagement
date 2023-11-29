@@ -21,9 +21,9 @@ public interface UserDAO {
     /**
      * 信息删除
      *
-     * @param id 需要删除的用户信息的id
+     * @param empId 需要删除的用户信息的id
      */
-    boolean delete(Integer id);
+    boolean delete(Integer empId);
 
     /**
      * 更改信息
@@ -62,6 +62,7 @@ public interface UserDAO {
      * @return 返回用户信息类型的集合
      */
     List<User> selectAll(UserEnum userEnum, int key);
+
     List<User> selectAll();
 
     /**

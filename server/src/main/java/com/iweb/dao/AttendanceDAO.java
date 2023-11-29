@@ -21,9 +21,9 @@ public interface AttendanceDAO {
     /**
      * 信息删除
      *
-     * @param id 需要删除的考勤信息的id
+     * @param empId 需要删除的考勤信息的员工id
      */
-    boolean delete(Integer id);
+    boolean delete(Integer empId);
 
     /**
      * 更改信息

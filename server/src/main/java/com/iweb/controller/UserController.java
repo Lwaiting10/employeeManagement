@@ -116,7 +116,7 @@ public class UserController {
                         // 获取客户端的确认信息
                         if ("y".equalsIgnoreCase(CommunicationUtil.receive(socket))) {
                             // 确认删除
-                            if (UserService.deleteUser(user1.getUserId())) {
+                            if (UserService.deleteUser(user1.getUsername())) {
                                 // 删除成功，返回true
                                 CommunicationUtil.send(socket, "true");
                             } else {

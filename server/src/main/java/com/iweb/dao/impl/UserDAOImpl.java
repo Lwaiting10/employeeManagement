@@ -17,11 +17,20 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO {
     @Override
     public synchronized boolean insert(User u) {
-        String sql = "insert into user(username,password,type)" + "values(?,?,?)";
+        String sql;
+        if (u.getPassword() == null) {
+            sql = "insert into user(username)" + "values(?)";
+        } else {
+            sql = "insert into user(username,password,type)" + "values(?,?,?)";
+        }
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, u.getUsername());
-            ps.setString(2, u.getPassword());
-            ps.setString(3, u.getType());
+            if (u.getPassword() == null) {
+                ps.setInt(1, u.getUsername());
+            } else {
+                ps.setInt(1, u.getUsername());
+                ps.setString(2, u.getPassword());
+                ps.setString(3, u.getType());
+            }
             ps.execute();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
@@ -35,8 +44,8 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public synchronized boolean delete(Integer id) {
-        String sql = "delete from user where login_id=" + id;
+    public synchronized boolean delete(Integer empId) {
+        String sql = "delete from user where username =" + empId;
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.execute();
             return true;

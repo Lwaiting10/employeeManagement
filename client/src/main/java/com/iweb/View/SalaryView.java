@@ -32,33 +32,33 @@ public class SalaryView {
             log("4 - 添加信息");
             log("5 - 更改信息");
             log("6 - 删除信息");
-            String message = CommunicationUtil.chooseAndGetMessage();
-            if ("exit".equals(message)) {
-                return;
-            }
-            // 1 - 查看所有考勤信息
-            if ("selectAll".equals(message)) {
-                selectAllView();
-            }
-            // 2 - 根据员工id查找
-            if ("selectByEmpId".equals(message)) {
-                selectByEmpIdView();
-            }
-            // 3 - 根据工资发放日期查找(模糊查找)
-            if ("selectByPaymentDate".equals(message)) {
-                selectByPaymentDateView();
-            }
-            // 4 - 添加信息
-            if ("insert".equals(message)) {
-                insertView();
-            }
-            // 5 - 更改信息
-            if ("update".equals(message)) {
-                updateView();
-            }
-            // 6 - 删除信息
-            if ("delete".equals(message)) {
-                deleteView();
+            switch (CommunicationUtil.chooseAndGetMessage()) {
+                case "exit":
+                    return;
+                // 1 - 查看所有考勤信息
+                case "selectAll":
+                    selectAllView();
+                    break;
+                // 2 - 根据员工id查找
+                case "selectByEmpId":
+                    selectByEmpIdView();
+                    break;
+                // 3 - 根据工资发放日期查找(模糊查找)
+                case "selectByPaymentDate":
+                    selectByPaymentDateView();
+                    break;
+                // 4 - 添加信息
+                case "insert":
+                    insertView();
+                    break;
+                // 5 - 更改信息
+                case "update":
+                    updateView();
+                    break;
+                // 6 - 删除信息
+                case "delete":
+                    deleteView();
+                    break;
             }
         }
     }
@@ -103,15 +103,27 @@ public class SalaryView {
      * 新增页面
      */
     private static void insertView() throws IOException {
-        // TODO: 28/11/2023 做相应的限制管理
         // 获取添加页面的输入的考勤信息 并 将新增信息发给服务器
         log("输入新增薪资信息:");
         CommunicationUtil.send(getSalary(ScannerUtil.getId()).toString());
+        String message = CommunicationUtil.receive();
         // 获取服务器反馈
-        if ("true".equals(CommunicationUtil.receive())) {
-            log("新增成功!");
-        } else {
-            log("新增失败！");
+        switch (message) {
+            case "true":
+                log("新增成功!");
+                break;
+            case "absent":
+                log("不可以新增员工id不存在的信息!");
+                break;
+            case "repeat":
+                log("该员工已经有薪资信息,不可再次添加!");
+                break;
+            case "incorrectData":
+                log("数据有误!");
+                break;
+            default:
+                log("新增失败！");
+                break;
         }
     }
 
@@ -133,7 +145,7 @@ public class SalaryView {
             CommunicationUtil.deleteConfirm();
         } else {
             // 没有获取数据
-            log("没有该id的员工考勤信息！");
+            log("没有该id的员工薪资信息！");
         }
     }
 
@@ -164,7 +176,7 @@ public class SalaryView {
             }
         } else {
             // 没有获取数据
-            log("没有该id的员工考勤信息！");
+            log("没有该id的员工薪资信息！");
         }
     }
 
