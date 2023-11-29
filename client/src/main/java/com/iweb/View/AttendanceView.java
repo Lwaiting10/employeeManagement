@@ -28,29 +28,29 @@ public class AttendanceView {
             log("3 - 添加信息");
             log("4 - 更改信息");
             log("5 - 删除信息");
-            String message = CommunicationUtil.chooseAndGetMessage();
-            if ("exit".equals(message)) {
-                return;
-            }
-            // 1 - 查看所有考勤信息
-            if ("selectAll".equals(message)) {
-                selectAllView();
-            }
-            // 2 - 根据员工id查找
-            if ("selectByEmpId".equals(message)) {
-                selectByEmpIdView();
-            }
-            // 3 - 添加信息
-            if ("insert".equals(message)) {
-                insertView();
-            }
-            // 4 - 更改信息
-            if ("update".equals(message)) {
-                updateView();
-            }
-            // 5 - 删除信息
-            if ("delete".equals(message)) {
-                deleteView();
+            switch (CommunicationUtil.chooseAndGetMessage()) {
+                case "exit":
+                    return;
+                case "selectAll":
+                    // 1 - 查看所有考勤信息
+                    selectAllView();
+                    break;
+                case "selectByEmpId":
+                    // 2 - 根据员工id查找
+                    selectByEmpIdView();
+                    break;
+                case "insert":
+                    // 3 - 添加信息
+                    insertView();
+                    break;
+                case "update":
+                    // 4 - 更改信息
+                    updateView();
+                    break;
+                case "delete":
+                    // 5 - 删除信息
+                    deleteView();
+                    break;
             }
         }
     }
@@ -81,15 +81,28 @@ public class AttendanceView {
      * 新增页面
      */
     private static void insertView() throws IOException {
-        // TODO: 28/11/2023 做相应的限制管理
+
         // 获取添加页面的输入的考勤信息 并 将新增信息发给服务器
         log("输入新增考勤信息:");
         CommunicationUtil.send(getAttendance(getEmpId()).toString());
         // 获取服务器反馈
-        if ("true".equals(CommunicationUtil.receive())) {
-            log("新增成功!");
-        } else {
-            log("新增失败！");
+        String message = CommunicationUtil.receive();
+        switch (message) {
+            case "true":
+                log("新增成功!");
+                break;
+            case "absent":
+                log("不可以新增员工id不存在的信息!");
+                break;
+            case "repeat":
+                log("该员工已经有考勤信息,不可再次添加!");
+                break;
+            case "incorrectData":
+                log("数据有误!");
+                break;
+            default:
+                log("新增失败！");
+                break;
         }
     }
 

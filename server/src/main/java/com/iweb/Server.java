@@ -15,6 +15,7 @@ import java.util.concurrent.*;
  * @date 26/11/2023 下午3:49
  */
 public class Server {
+    private final static int PORT = 8888;
     public volatile static ArrayList<Socket> list = new ArrayList<>();
     public static ThreadPoolExecutor threadPoolExecutor =
             new ThreadPoolExecutor(10, 15, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
@@ -24,12 +25,12 @@ public class Server {
 
     public static void main(String[] args) {
         // 创建服务器端 指定监听端口
-        try {
-            ServerSocket ss = new ServerSocket(8888);
+        try (ServerSocket ss = new ServerSocket(PORT);
+        ) {
+            System.out.println("用户管理系统服务端已开启!");
             // 服务器端需要不断接受来自客户端的请求 并且将客户端发送过来的socket对象存放在list中
             while (true) {
                 Socket socket = ss.accept();
-
                 list.add(socket);
                 System.out.println(socket.getInetAddress() + "进入了本系统！在线人数为:" + list.size());
                 // 每接受到一个客户端 就开启一个线程为其服务
@@ -51,13 +52,14 @@ public class Server {
                                     list.remove(socket);
                                     System.out.println(socket.getInetAddress() + "退出了本系统，当前人数为:" + list.size());
                                 }
-                            } catch (Exception e) {
+                            } catch (IOException e) {
                             }
                         }
                     }
                 });
             }
         } catch (IOException e) {
+            System.out.println(PORT+"端口被占用！");
         }
     }
 }

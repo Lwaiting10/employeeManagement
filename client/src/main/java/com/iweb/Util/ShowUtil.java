@@ -22,7 +22,7 @@ public class ShowUtil {
     public static void showEmployee(List<Employee> employees) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (employees == null) {
-            log("未查询到员工信息！");
+            log("未查询到信息！");
             return;
         }
         System.out.println("员工编号\t姓名\t性别\t部门\t入职时间\t\t出生日期");
@@ -35,7 +35,7 @@ public class ShowUtil {
 
     public static void showEmployee(Employee e) {
         if (e == null) {
-            log("未查询到员工信息！");
+            log("未查询到信息！");
             return;
         }
         List<Employee> employees = new ArrayList<>();
@@ -49,7 +49,7 @@ public class ShowUtil {
     public static void showSalary(List<Salary> salaries) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (salaries == null) {
-            log("未查询到薪资信息！");
+            log("未查询到信息！");
             return;
         }
         System.out.println("员工编号\t基础薪资\t奖金\t扣款\t发放时间\t\t备注");
@@ -61,7 +61,7 @@ public class ShowUtil {
 
     public static void showSalary(Salary s) {
         if (s == null) {
-            log("未查询到员工信息！");
+            log("未查询到信息！");
             return;
         }
         List<Salary> salaries = new ArrayList<>();
@@ -75,7 +75,7 @@ public class ShowUtil {
     public static void showAttendance(List<Attendance> attendances) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (attendances == null) {
-            log("未查询到考勤信息！");
+            log("未查询到信息！");
             return;
         }
         System.out.println("员工编号\t开始时间\t\t结束时间\t\t迟到次数\t早退次数\t请假情况");
@@ -88,7 +88,7 @@ public class ShowUtil {
 
     public static void showAttendance(Attendance a) {
         if (a == null) {
-            log("未查询到考勤信息！");
+            log("未查询到信息！");
             return;
         }
         List<Attendance> attendances = new ArrayList<>();

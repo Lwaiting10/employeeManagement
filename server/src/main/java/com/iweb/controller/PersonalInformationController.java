@@ -72,7 +72,7 @@ public class PersonalInformationController {
         }
     }
 
-    private static void showInformation(Socket socket, User user) throws IOException{
+    private static void showInformation(Socket socket, User user) throws IOException {
         while (true) {
             String key = CommunicationUtil.receive(socket);
             if (key == null) {
@@ -90,8 +90,12 @@ public class PersonalInformationController {
                     CommunicationUtil.send(socket, "employee");
                     // 获取登录用户的员工信息
                     Employee employee = EmployeeService.selectById(user.getUsername());
-                    // 发送个人信息
-                    CommunicationUtil.send(socket, employee.toString());
+                    if (employee != null) {
+                        // 发送个人信息
+                        CommunicationUtil.send(socket, employee.toString());
+                    } else {
+                        CommunicationUtil.send(socket, "null");
+                    }
                     break;
                 }
                 // 2 - 查看薪资信息
@@ -99,16 +103,24 @@ public class PersonalInformationController {
                     CommunicationUtil.send(socket, "salary");
                     // 获取登录用户的薪资信息
                     Salary salary = SalaryService.selectByEmpId(user.getUsername());
-                    // 发送薪资信息
-                    CommunicationUtil.send(socket, salary.toString());
+                    if (salary != null) {
+                        // 发送薪资信息
+                        CommunicationUtil.send(socket, salary.toString());
+                    } else {
+                        CommunicationUtil.send(socket, "null");
+                    }
                     break;
                 }
                 case "3": {
                     CommunicationUtil.send(socket, "attendance");
                     // 获取登录用户的考勤信息
                     Attendance attendance = AttendanceService.selectByEmpId(user.getUsername());
-                    // 发送考勤信息
-                    CommunicationUtil.send(socket, attendance.toString());
+                    if (attendance != null) {
+                        // 发送考勤信息
+                        CommunicationUtil.send(socket, attendance.toString());
+                    } else {
+                        CommunicationUtil.send(socket, "null");
+                    }
                     break;
                 }
                 default:

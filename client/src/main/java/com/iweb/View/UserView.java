@@ -29,29 +29,29 @@ public class UserView {
             log("3 - 添加信息");
             log("4 - 更改信息");
             log("5 - 删除信息");
-            String message = CommunicationUtil.chooseAndGetMessage();
-            if ("exit".equals(message)) {
-                return;
-            }
-            // 1 - 查看所有考勤信息
-            if ("selectAll".equals(message)) {
-                selectAllView();
-            }
-            // 2 - 根据员工id查找
-            if ("selectByEmpId".equals(message)) {
-                selectByEmpIdView();
-            }
-            // 3 - 添加信息
-            if ("insert".equals(message)) {
-                insertView();
-            }
-            // 4 - 更改信息
-            if ("update".equals(message)) {
-                updateView();
-            }
-            // 5 - 删除信息
-            if ("delete".equals(message)) {
-                deleteView();
+            switch (CommunicationUtil.chooseAndGetMessage()) {
+                case "exit":
+                    return;
+                // 1 - 查看所有考勤信息
+                case "selectAll":
+                    selectAllView();
+                    break;
+                // 2 - 根据员工id查找
+                case "selectByEmpId":
+                    selectByEmpIdView();
+                    break;
+                // 3 - 添加信息
+                case "insert":
+                    insertView();
+                    break;
+                // 4 - 更改信息
+                case "update":
+                    updateView();
+                    break;
+                // 5 - 删除信息
+                case "delete":
+                    deleteView();
+                    break;
             }
         }
     }

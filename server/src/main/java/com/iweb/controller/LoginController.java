@@ -18,10 +18,6 @@ public class LoginController {
         try {
             while (true) {
                 String key = CommunicationUtil.receive(socket);
-                if (key == null) {
-                    CommunicationUtil.send(socket, "wrong");
-                    continue;
-                }
                 switch (key) {
                     case "0": {
                         CommunicationUtil.send(socket, "exit");
@@ -38,28 +34,41 @@ public class LoginController {
                         user = UserService.login(inputUser);
                         // 登陆失败，向客户端发送失败信息
                         if (user == null) {
-                            CommunicationUtil.send(socket, "false");
+                            CommunicationUtil.send(socket, "fail");
                             break;
                         }
                         // 重复登陆处理
                         if (repeatedLogin(user)) {
                             // 该账号已经登录
-                            CommunicationUtil.send(socket, "login");
+                            user = null;
+                            CommunicationUtil.send(socket, "repeatLanding");
                             break;
                         }
                         // 添加到用户集合
                         Server.users.add(user);
+                        CommunicationUtil.send(socket, "success");
                         // 登陆成功,将用户信息发送给客户端
                         CommunicationUtil.send(socket, user.toString());
-                        // 普通用户界面跳转
-                        if ("0".equals(user.getType())) {
-                            CommunicationUtil.send(socket, "NormalUserView");
-                            NormalUserController.normalUserController(socket, user);
-                        }
-                        // 管理员界面跳转
-                        if ("1".equals(user.getType())) {
-                            CommunicationUtil.send(socket, "AdminView");
-                            AdminController.adminController(socket, user);
+                        switch (user.getType()) {
+                            case "0": {
+                                // 普通用户界面跳转
+                                CommunicationUtil.send(socket, "NormalUserView");
+                                NormalUserController.normalUserController(socket, user);
+                                break;
+                            }
+                            case "1": {
+                                // 管理员界面跳转
+                                CommunicationUtil.send(socket, "AdminView");
+                                AdminController.adminController(socket, user);
+                                break;
+                            }
+                            default: {
+                                // 权限有误
+                                CommunicationUtil.send(socket, "wrong");
+                                // 控制台打印输出错误提醒
+                                System.out.println("(wrong) 用户:" + user.getUsername()
+                                        + "权限出现错误:" + user.getType());
+                            }
                         }
                         // 用户登出，从用户集合删除
                         Server.users.remove(user);
@@ -77,13 +86,6 @@ public class LoginController {
                         + user.getUsername() + "登出了系统!");
             }
         }
-    }
-
-    /**
-     * 将登录成功的信息发送回登录的线程
-     */
-    private static User saveUserInfo(User user) {
-        return user;
     }
 
     /**

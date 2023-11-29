@@ -37,7 +37,7 @@ public class ScannerUtil {
                 }
                 return Integer.parseInt(intStr);
             } catch (Exception e) {
-                System.out.println("输入有误,必须为纯数字,请重新输入:");
+                System.out.println("输入有误,请重新输入:");
             }
         }
     }
@@ -94,7 +94,7 @@ public class ScannerUtil {
                 }
                 return Integer.parseInt(inputIdStr);
             } catch (Exception e) {
-                System.out.println("输入有误,员工id必须为纯数字,请重新输入:");
+                System.out.println("输入有误,请重新输入:");
             }
         }
     }
@@ -153,17 +153,6 @@ public class ScannerUtil {
             } catch (ParseException e) {
                 log("格式错误！重新输入(yyyy-MM-dd):");
             }
-        }
-    }
-
-    public static String getPassword() {
-        while (true) {
-            String inputPassword = SCANNER.nextLine();
-            if ("".equals(inputPassword)) {
-                log("不能为空！");
-                continue;
-            }
-            return inputPassword;
         }
     }
 }

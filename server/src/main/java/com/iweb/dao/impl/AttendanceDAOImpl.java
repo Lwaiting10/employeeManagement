@@ -39,8 +39,8 @@ public class AttendanceDAOImpl implements AttendanceDAO {
     }
 
     @Override
-    public synchronized boolean delete(Integer id) {
-        String sql = "delete from attendance where attendance_id =" + id;
+    public synchronized boolean delete(Integer empId) {
+        String sql = "delete from attendance where emp_id =" + empId;
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.execute();
             return true;
