@@ -19,7 +19,7 @@ public class Client {
             DataUtil.socket = new Socket(ip, 8888);
             LoginView.mainView();
         } catch (Exception e) {
-            log("连接服务失败!");
+            log("连接服务器失败!");
         }
     }
 }

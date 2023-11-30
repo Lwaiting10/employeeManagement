@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import static com.iweb.Util.Log.log;
+
 /**
  * @author Liu Xiong
  * @date 28/11/2023 下午2:48
@@ -18,12 +20,7 @@ import java.util.List;
 public class SalaryController {
     public static void salaryManage(Socket socket, User user) throws IOException {
         while (true) {
-            String key = CommunicationUtil.receive(socket);
-            if ("".equals(key)) {
-                CommunicationUtil.send(socket, "wrong");
-                continue;
-            }
-            switch (key) {
+            switch (CommunicationUtil.receive(socket)) {
                 // 0 - 退出
                 case "0": {
                     CommunicationUtil.send(socket, "exit");
@@ -88,6 +85,7 @@ public class SalaryController {
                 if (SalaryService.deleteSalary(salary.getEmpId())) {
                     // 删除成功，返回true
                     CommunicationUtil.send(socket, "true");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "删除薪资信息: " + salary);
                 } else {
                     // 删除失败,返回false
                     CommunicationUtil.send(socket, "false");
@@ -119,9 +117,12 @@ public class SalaryController {
             if (SalaryService.updateSalary(salaryUpdate)) {
                 // 修改成功,返回true
                 CommunicationUtil.send(socket, "true");
+                log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "更改了薪资信息: 原信息: "
+                        + salary + ",更新为: " + salaryUpdate);
             } else {
                 // 修改失败,返回false
                 CommunicationUtil.send(socket, "false");
+                log("数据库写入失败:" + salaryUpdate);
             }
         } else {
             // 没有找到，返回null
@@ -147,9 +148,12 @@ public class SalaryController {
                 if (SalaryService.insertSalary(newSalary)) {
                     // 新增成功,返回true
                     CommunicationUtil.send(socket, "true");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "添加了薪资信息:" + newSalary);
+
                 } else {
                     // 新增失败,返回false
                     CommunicationUtil.send(socket, "false");
+                    log("数据库写入失败:" + newSalary);
                 }
             }
         } else {

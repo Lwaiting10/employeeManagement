@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import static com.iweb.Util.Log.log;
+
 /**
  * @author Liu Xiong
  * @date 28/11/2023 下午2:45
@@ -77,6 +79,7 @@ public class AttendanceController {
                 if (AttendanceService.deleteAttendance(attendance.getEmpId())) {
                     // 删除成功，返回true
                     CommunicationUtil.send(socket, "true");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "删除考勤信息: " + attendance);
                 } else {
                     // 删除失败,返回false
                     CommunicationUtil.send(socket, "false");
@@ -108,9 +111,12 @@ public class AttendanceController {
             if (AttendanceService.updateAttendance(attendanceUpdate)) {
                 // 修改成功,返回true
                 CommunicationUtil.send(socket, "true");
+                log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "更改了考勤信息: 原信息: "
+                        + attendance + ",更新为: " + attendanceUpdate);
             } else {
                 // 修改失败,返回false
                 CommunicationUtil.send(socket, "false");
+                log("数据库写入失败:" + attendanceUpdate);
             }
         } else {
             // 没有找到，返回null
@@ -136,9 +142,12 @@ public class AttendanceController {
                 if (AttendanceService.insertAttendance(newAttendance)) {
                     // 新增成功,返回true
                     CommunicationUtil.send(socket, "true");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "添加了考勤信息:" + newAttendance);
+
                 } else {
                     // 新增失败,返回false
                     CommunicationUtil.send(socket, "false");
+                    log("数据库写入失败:" + newAttendance);
                 }
             }
         } else {

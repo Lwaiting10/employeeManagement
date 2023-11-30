@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
+import static com.iweb.Util.Log.log;
+
 /**
  * @author Liu Xiong
  * @date 27/11/2023 下午11:01
@@ -134,11 +136,15 @@ public class EmployeeManageController {
                 if (EmployeeService.insertEmployee(inputEmployee)) {
                     // 数据库插入成功
                     CommunicationUtil.send(socket, "success");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "添加了员工信息:" + inputEmployee);
                     // 为新增员工创建一个系统账户(密码为默认密码)
-                    UserService.insertUser(new User(inputEmployee.getId()));
+                    User newUser = new User(inputEmployee.getId());
+                    UserService.insertUser(newUser);
+                    log("系统自动创建账号:" + newUser);
                 } else {
                     // 数据库插入失败
                     CommunicationUtil.send(socket, "fail");
+                    log("数据库写入失败:" + inputEmployee);
                 }
             } else {
                 // 该员工已存在
@@ -159,17 +165,24 @@ public class EmployeeManageController {
         // 检查该id员工是否存在
         Employee employee = EmployeeService.selectById(Integer.parseInt(inputEmployeeId));
         if (employee != null) {
-            // 该员工存在，发送给客户端
+            // 该员工存在
+            // 判断是否为管理员
+            if (UserService.selectByUsername(employee.getId()).isAdmin()) {
+                CommunicationUtil.send(socket, "admin");
+                return;
+            }
             CommunicationUtil.send(socket, employee.toString());
             // 接收客户端发来的修改后的信息并更改信息
-            employee = TransformUtil.getEmployee(CommunicationUtil.receive(socket));
+            Employee inputEmployee = TransformUtil.getEmployee(CommunicationUtil.receive(socket));
             // 将更新信息写入数据库
-            if (EmployeeService.updateEmployee(employee)) {
+            if (EmployeeService.updateEmployee(inputEmployee)) {
                 // 写入成功，返回true
                 CommunicationUtil.send(socket, "true");
+                log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "更改了员工信息: 原信息: " + employee + ",更新为: " + inputEmployee);
             } else {
                 // 写入失败,返回false
                 CommunicationUtil.send(socket, "false");
+                log("数据库写入失败:" + inputEmployee);
             }
         } else {
             // 不存在。返回null
@@ -187,7 +200,12 @@ public class EmployeeManageController {
         // 检查该id员工是否存在
         Employee employee = EmployeeService.selectById(Integer.parseInt(inputEmployeeId));
         if (employee != null) {
-            // 该员工存在，发送给客户端
+            // 该员工存在
+            // 判断是否为管理员
+            if (UserService.selectByUsername(employee.getId()).isAdmin()) {
+                CommunicationUtil.send(socket, "admin");
+                return;
+            }
             CommunicationUtil.send(socket, employee.toString());
             // 获取客户端的确认信息
             if ("y".equalsIgnoreCase(CommunicationUtil.receive(socket))) {
@@ -195,6 +213,7 @@ public class EmployeeManageController {
                 if (EmployeeService.deleteEmployee(employee.getId())) {
                     // 删除成功，返回true
                     CommunicationUtil.send(socket, "true");
+                    log(socket.getInetAddress() + "使用管理员账号:" + user.getUsername() + "删除员工信息: " + employee);
                     // 将被删除的员工的相关信息一起删除
                     // 用户信息
                     UserService.deleteUser(employee.getId());
@@ -202,6 +221,7 @@ public class EmployeeManageController {
                     SalaryService.deleteSalary(employee.getId());
                     // 考勤信息
                     AttendanceService.deleteAttendance(employee.getId());
+                    log("员工:" + employee.getId() + "的用户信息,薪资信息，考勤信息被携带删除!");
                 } else {
                     // 删除失败,返回false
                     CommunicationUtil.send(socket, "false");

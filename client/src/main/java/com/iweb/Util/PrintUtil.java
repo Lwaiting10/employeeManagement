@@ -13,7 +13,7 @@ public class PrintUtil {
         for (int i = 0; i < message.length(); i++) {
             System.out.print(message.charAt(i));
             try {
-                Thread.sleep(10);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

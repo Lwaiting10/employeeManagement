@@ -71,7 +71,8 @@ public class UserView {
      */
     private static void selectByEmpIdView() throws IOException {
         // 发送要查询的员工id信息
-        CommunicationUtil.send(String.valueOf(ScannerUtil.getId()));
+        log("员工id(纯数字):");
+        CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
         // 接收服务器反馈
         User user = TransformUtil.getUser(CommunicationUtil.receive());
         // 展示信息
@@ -82,17 +83,31 @@ public class UserView {
      * 新增页面
      */
     private static void insertView() throws IOException {
-        // TODO: 28/11/2023 做相应的限制管理
         // 获取添加页面的输入的考勤信息 并 将新增信息发给服务器
         log("输入新增用户信息:");
-        User inputUser = new User(getEmpId(), getPassword(), getType());
+        log("用户名(纯数字):");
+        int inputUsername = ScannerUtil.getInt();
+        log("密码:");
+        String inputPassword = ScannerUtil.getString();
+        log("权限(0-普通用户/1-管理员):");
+        String inputType = ScannerUtil.getType();
+        User inputUser = new User(inputUsername, inputPassword, inputType);
         // 向服务器发送信息
         CommunicationUtil.send(inputUser.toString());
         // 获取服务器反馈
-        if ("true".equals(CommunicationUtil.receive())) {
-            log("新增成功!");
-        } else {
-            log("新增失败！");
+        switch (CommunicationUtil.receive()) {
+            case "true":
+                log("新增成功!");
+                break;
+            case "repeat":
+                log("该员工id已经存在用户信息");
+                break;
+            case "false":
+                log("新增失败!");
+                break;
+            case "wrong":
+                log("数据出错!");
+                break;
         }
     }
 
@@ -100,21 +115,26 @@ public class UserView {
      * 删除页面
      */
     private static void deleteView() throws IOException {
-        log("输入要删除的员工id:");
-        // 发送需要删除的员工id
+        log("输入要删除的用户id:");
+        // 发送需要删除的用户id
         CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
+        String message = CommunicationUtil.receive();
+        if ("admin".equals(message)) {
+            log("该用户是管理员，禁止操作!");
+            return;
+        }
         // 接收服务器返回的数据
-        User user = TransformUtil.getUser(CommunicationUtil.receive());
+        User user = TransformUtil.getUser(message);
         if (user != null) {
             // 获得数据
             // 展示原数据
-            log("该员工的用户信息如下:");
+            log("用户信息如下:");
             ShowUtil.showUser(user);
             // 删除确认操作
             CommunicationUtil.deleteConfirm();
         } else {
             // 没有获取数据
-            log("没有该id的员工用户信息！");
+            log("没有该id的用户信息！");
         }
     }
 
@@ -122,11 +142,16 @@ public class UserView {
      * 更改信息页面
      */
     private static void updateView() throws IOException {
-        log("输入要更改信息的员工id:");
+        log("输入要更改信息的用户id:");
         // 发送需要更改信息的员工id
         CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
-        // 接收服务器返回的数据
-        User user = TransformUtil.getUser(CommunicationUtil.receive());
+        // 接收服务器反馈
+        String message = CommunicationUtil.receive();
+        if ("admin".equals(message)) {
+            log("该用户是管理员，禁止操作!");
+            return;
+        }
+        User user = TransformUtil.getUser(message);
         if (user != null) {
             // 获得数据
             // 展示原数据
@@ -134,8 +159,10 @@ public class UserView {
             ShowUtil.showUser(user);
             log("输入修改后的数据:");
             // 获取修改后的数据
-            user.setPassword(getPassword());
-            user.setType(getType());
+            log("密码:");
+            user.setPassword(ScannerUtil.getString());
+            log("权限(0-普通用户/1-管理员):");
+            user.setType(ScannerUtil.getType());
             // 将数据发送回服务器
             CommunicationUtil.send(user.toString());
             // 接收服务器反馈
@@ -149,21 +176,5 @@ public class UserView {
             log("没有该id的用户信息！");
         }
     }
-
-    private static int getEmpId() {
-        log("员工id(纯数字):");
-        return ScannerUtil.getInt();
-    }
-
-    private static String getPassword() {
-        log("密码:");
-        return ScannerUtil.getString();
-    }
-
-    private static String getType() {
-        log("权限(0-普通用户/1-管理员):");
-        return ScannerUtil.getType();
-    }
-
 }
 
