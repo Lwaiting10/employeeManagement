@@ -7,8 +7,10 @@ import com.iweb.entity.User;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.*;
+
+import static com.iweb.Util.Log.log;
 
 /**
  * @author Liu Xiong
@@ -16,28 +18,26 @@ import java.util.concurrent.*;
  */
 public class Server {
     private final static int PORT = 8888;
-    public volatile static ArrayList<Socket> list = new ArrayList<>();
     public static ThreadPoolExecutor threadPoolExecutor =
             new ThreadPoolExecutor(10, 15, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
 
-    // 登录用户集合 (用于重复登录处理)
-    public volatile static ArrayList<User> users = new ArrayList<>();
+    public volatile static HashMap<Socket, User> map = new HashMap<>();
 
     public static void main(String[] args) {
         // 创建服务器端 指定监听端口
         try (ServerSocket ss = new ServerSocket(PORT);
         ) {
             System.out.println("用户管理系统服务端已开启!");
-            // 服务器端需要不断接受来自客户端的请求 并且将客户端发送过来的socket对象存放在list中
+            log("用户管理系统服务端开启");
+            // 服务器端需要不断接受来自客户端的请求 并且将客户端发送过来的socket对象存放在map中
             while (true) {
                 Socket socket = ss.accept();
-                list.add(socket);
-                System.out.println(socket.getInetAddress() + "进入了本系统！在线人数为:" + list.size());
+                User user = new User();
+                map.put(socket, user);
+                log(socket.getInetAddress() + "进入了系统");
+                System.out.println(socket.getInetAddress() + "进入了本系统！在线人数为:" + map.size());
                 // 每接受到一个客户端 就开启一个线程为其服务
                 threadPoolExecutor.execute(new Runnable() {
-                    private User currentUser;
-                    User user = new User();
-
                     @Override
                     public void run() {
                         try {
@@ -47,10 +47,11 @@ public class Server {
                         } finally {
                             // 如果连接当前服务器的客户端 出现了其他问题 从list集合中将其删除
                             try {
-                                synchronized (list) {
+                                synchronized (map) {
                                     socket.close();
-                                    list.remove(socket);
-                                    System.out.println(socket.getInetAddress() + "退出了本系统，当前人数为:" + list.size());
+                                    map.remove(socket);
+                                    log(socket.getInetAddress() + "退出了系统");
+                                    System.out.println(socket.getInetAddress() + "退出了本系统，当前人数为:" + map.size());
                                 }
                             } catch (IOException e) {
                             }
@@ -59,7 +60,8 @@ public class Server {
                 });
             }
         } catch (IOException e) {
-            System.out.println(PORT+"端口被占用！");
+            System.out.println(PORT + "端口被占用！");
+            log(PORT + "端口被占用！");
         }
     }
 }

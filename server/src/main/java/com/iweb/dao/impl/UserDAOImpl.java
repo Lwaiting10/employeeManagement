@@ -124,7 +124,7 @@ public class UserDAOImpl implements UserDAO {
                 sql = "select * from user";
                 break;
             case USERNAME:
-                sql = "select * from user where username like '%" + key + "%'";
+                sql = "select * from user where username =" + key;
                 break;
             case TYPE:
                 sql = "select * from user where type =" + key;

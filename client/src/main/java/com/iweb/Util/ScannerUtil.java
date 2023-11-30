@@ -3,6 +3,9 @@ package com.iweb.Util;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -14,17 +17,29 @@ import static com.iweb.Util.PrintUtil.log;
  */
 public class ScannerUtil {
     private final static Scanner SCANNER = new Scanner(System.in);
-    private final static SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
-
 
     public static Date getDate() {
+        // 创建DateTimeFormatter对象
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         while (true) {
             try {
-                return SDF.parse(SCANNER.nextLine());
-            } catch (ParseException e) {
+                String dateString = SCANNER.nextLine();
+                // 将字符串解析为LocalDate对象
+                LocalDate localDate = LocalDate.parse(dateString, formatter);
+                if (localDate.getDayOfMonth() >= 28) {
+                    // 将转换后的日期与输入的日期进行匹配，自动纠正检测
+                    if (!String.valueOf(localDate.getDayOfMonth()).equals(dateString.substring(dateString.length() - 2))) {
+                        log("格式错误！重新输入(yyyy-MM-dd):");
+                        continue;
+                    }
+                }
+                return sdf.parse(localDate.toString());
+            } catch (DateTimeParseException | ParseException e) {
                 log("格式错误！重新输入(yyyy-MM-dd):");
             }
         }
+
     }
 
     public static int getInt() {
@@ -72,87 +87,24 @@ public class ScannerUtil {
     public static String getType() {
         while (true) {
             String inputType = SCANNER.nextLine();
-            if ("0".equals(inputType) || "1".equals(inputType)) {
+            if ("0".equals(inputType)) {
                 return inputType;
+            }
+            if ("1".equals(inputType)) {
+                log("暂时关闭对管理员的相关操作！请重新输入:");
+                continue;
             }
             log("输入有误,重新输入(0-普通用户/1-管理员):");
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(getBigDecimal());
-    }
-
-    public static int getId() {
-        while (true) {
-            try {
-                log("员工id(纯数字):");
-                String inputIdStr = SCANNER.nextLine();
-                if ("".equals(inputIdStr)) {
-                    log("不能为空！");
-                    continue;
-                }
-                return Integer.parseInt(inputIdStr);
-            } catch (Exception e) {
-                System.out.println("输入有误,请重新输入:");
-            }
-        }
-    }
-
-    public static String getName() {
-        while (true) {
-            log("员工姓名:");
-            String inputName = SCANNER.nextLine();
-            if ("".equals(inputName)) {
-                log("不能为空！");
-                continue;
-            }
-            return inputName;
-        }
-    }
-
     public static String getGender() {
         while (true) {
-            log("员工性别(男/女):");
             String inputGender = SCANNER.nextLine();
             if ("男".equals(inputGender) || "女".equals(inputGender)) {
                 return inputGender;
             }
             log("输入有误,重新输入(男/女):");
-        }
-    }
-
-    public static String getDepartment() {
-        while (true) {
-            log("员工部门:");
-            String inputDepartment = SCANNER.nextLine();
-            if ("".equals(inputDepartment)) {
-                log("不能为空！");
-                continue;
-            }
-            return inputDepartment;
-        }
-    }
-
-    public static Date getHireDate() {
-        while (true) {
-            log("员工入职日期(yyyy-MM-dd):");
-            try {
-                return SDF.parse(SCANNER.nextLine());
-            } catch (ParseException e) {
-                log("格式错误！重新输入(yyyy-MM-dd):");
-            }
-        }
-    }
-
-    public static Date getBirthday() {
-        while (true) {
-            log("员工出生日期(yyyy-MM-dd):");
-            try {
-                return SDF.parse(SCANNER.nextLine());
-            } catch (ParseException e) {
-                log("格式错误！重新输入(yyyy-MM-dd):");
-            }
         }
     }
 }

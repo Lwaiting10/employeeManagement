@@ -41,4 +41,11 @@ public class User {
     public boolean verify(User u) {
         return u.username == username && u.password.equals(password);
     }
+
+    /**
+     * 是否是管理员判断
+     */
+    public boolean isAdmin() {
+        return "1".equals(type);
+    }
 }

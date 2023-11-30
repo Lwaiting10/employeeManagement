@@ -87,7 +87,8 @@ public class EmployeeView {
      */
     private static void selectByName() throws IOException {
         // 获取要查询的员工姓名
-        String name = ScannerUtil.getName();
+        log("员工姓名:");
+        String name = ScannerUtil.getString();
         // 将信息传给服务器
         CommunicationUtil.send(name);
         // 接收服务器传来的员工信息并转成对象集合
@@ -101,7 +102,8 @@ public class EmployeeView {
      */
     private static void selectByDepartment() throws IOException {
         // 获取要查询的员工部门
-        String department = ScannerUtil.getDepartment();
+        log("员工部门:");
+        String department = ScannerUtil.getString();
         // 将信息传给服务器
         CommunicationUtil.send(department);
         // 接收服务器传来的员工信息并转成对象集合
@@ -140,16 +142,19 @@ public class EmployeeView {
      * @return 返回服务器匹配的用户对象, 没有匹配的返回null
      */
     private static Employee getEmployeeFromServer() throws IOException {
-        int inputId = ScannerUtil.getId();
+        log("员工id(纯数字):");
+        int inputId = ScannerUtil.getInt();
         // 将员工id发送给服务器
         CommunicationUtil.send(String.valueOf(inputId));
         // 接收服务器反馈
         String message = CommunicationUtil.receive();
-        if ("null".equals(message)) {
-            return null;
-        }
-        if ("wrong".equals(message)) {
-            return null;
+        switch (message) {
+            case "null":
+                log("没有该id的员工！");
+                return null;
+            case "admin":
+                log("禁止对管理员的员工信息进行操作!");
+                return null;
         }
         // 返回获取的员工对象
         return TransformUtil.getEmployee(message);
@@ -163,7 +168,6 @@ public class EmployeeView {
         // 获取要操作的对象
         Employee employee = getEmployeeFromServer();
         if (employee == null) {
-            log("没有该id的员工！");
             return;
         }
         log("要删除的员工信息如下：");
@@ -180,17 +184,21 @@ public class EmployeeView {
         log("根据提示输入要更改的对象");
         Employee employee = getEmployeeFromServer();
         if (employee == null) {
-            log("没有该id的员工！");
             return;
         }
         log("要修改的员工原信息如下：");
         ShowUtil.showEmployee(employee);
         log("输入修改后的信息:");
-        employee.setName(ScannerUtil.getName());
+        log("员工姓名:");
+        employee.setName(ScannerUtil.getString());
+        log("员工性别(男/女):");
         employee.setGender(ScannerUtil.getGender());
-        employee.setDepartment(ScannerUtil.getDepartment());
-        employee.setHireDate(ScannerUtil.getHireDate());
-        employee.setBirthday(ScannerUtil.getBirthday());
+        log("员工部门:");
+        employee.setDepartment(ScannerUtil.getString());
+        log("员工入职日期(yyyy-MM-dd):");
+        employee.setHireDate(ScannerUtil.getDate());
+        log("员工出生日期(yyyy-MM-dd):");
+        employee.setBirthday(ScannerUtil.getDate());
         // 将修改后的员工信息发送给服务器
         CommunicationUtil.send(employee.toString());
         // 接收服务反馈信息
@@ -203,12 +211,18 @@ public class EmployeeView {
 
     private static Employee getInsertEmployee() {
         log("输入新增员工信息:");
-        int inputId = ScannerUtil.getId();
-        String inputName = ScannerUtil.getName();
+        log("员工id(纯数字):");
+        int inputId = ScannerUtil.getInt();
+        log("员工姓名:");
+        String inputName = ScannerUtil.getString();
+        log("员工性别(男/女):");
         String inputGender = ScannerUtil.getGender();
-        String inputDepartment = ScannerUtil.getDepartment();
-        Date inputHireDate = ScannerUtil.getHireDate();
-        Date inputBirthday = ScannerUtil.getBirthday();
+        log("员工部门:");
+        String inputDepartment = ScannerUtil.getString();
+        log("员工入职日期(yyyy-MM-dd):");
+        Date inputHireDate = ScannerUtil.getDate();
+        log("员工出生日期(yyyy-MM-dd):");
+        Date inputBirthday = ScannerUtil.getDate();
         return new Employee(inputId, inputName, inputGender, inputDepartment, inputHireDate, inputBirthday);
     }
 }

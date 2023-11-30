@@ -63,6 +63,7 @@ public class AttendanceDAOImpl implements AttendanceDAO {
             ps.setInt(4, a.getLateCount());
             ps.setInt(5, a.getEarlyLeaveCount());
             ps.setString(6, a.getLeaveRecord());
+            ps.setInt(7, a.getAttendanceId());
             ps.execute();
             return true;
         } catch (SQLException exception) {

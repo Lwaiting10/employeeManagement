@@ -70,7 +70,8 @@ public class AttendanceView {
      */
     private static void selectByEmpIdView() throws IOException {
         // 发送要查询的员工id信息
-        CommunicationUtil.send(String.valueOf(ScannerUtil.getId()));
+        log("员工id(纯数字):");
+        CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
         // 接收服务器反馈
         Attendance attendance = TransformUtil.getAttendance(CommunicationUtil.receive());
         // 展示信息

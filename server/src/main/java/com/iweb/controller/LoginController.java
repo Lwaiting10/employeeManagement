@@ -8,6 +8,9 @@ import com.iweb.service.UserService;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
+
+import static com.iweb.Util.Log.log;
 
 /**
  * @author Liu Xiong
@@ -45,7 +48,7 @@ public class LoginController {
                             break;
                         }
                         // 添加到用户集合
-                        Server.users.add(user);
+                        addToSocket(socket, user);
                         CommunicationUtil.send(socket, "success");
                         // 登陆成功,将用户信息发送给客户端
                         CommunicationUtil.send(socket, user.toString());
@@ -66,12 +69,12 @@ public class LoginController {
                                 // 权限有误
                                 CommunicationUtil.send(socket, "wrong");
                                 // 控制台打印输出错误提醒
-                                System.out.println("(wrong) 用户:" + user.getUsername()
-                                        + "权限出现错误:" + user.getType());
+                                log("(wrong) 用户:" + user.getUsername() + "权限出现错误:" + user.getType());
+                                System.out.println("(wrong) 用户:" + user.getUsername() + "权限出现错误:" + user.getType());
                             }
                         }
                         // 用户登出，从用户集合删除
-                        Server.users.remove(user);
+                        deleteFromSocket(socket);
                         break;
                     }
                     default:
@@ -80,10 +83,22 @@ public class LoginController {
             }
         } catch (IOException e) {
             // 用户异常退出
-            Server.users.remove(user);
+            deleteFromSocket(socket);
             if (user != null && user.getUsername() != 0) {
-                System.out.println(("1".equals(user.getType()) ? "管理员:" : "用户:")
-                        + user.getUsername() + "登出了系统!");
+                System.out.println(("1".equals(user.getType()) ? "管理员:" : "用户:") + user.getUsername() + "登出了系统!");
+                log(socket.getInetAddress() + "登出账号:" + user.getUsername());
+            }
+        }
+    }
+
+
+    /**
+     * 添加到对应socket的value中
+     */
+    private static void addToSocket(Socket socket, User user) {
+        for (Map.Entry<Socket, User> entry : Server.map.entrySet()) {
+            if (entry.getKey() == socket) {
+                entry.setValue(user);
             }
         }
     }
@@ -92,14 +107,23 @@ public class LoginController {
      * 重复登陆判断
      */
     private static boolean repeatedLogin(User user) {
-        if (Server.users.isEmpty()) {
-            return false;
-        }
-        for (User u : Server.users) {
-            if (u.getUsername() == user.getUsername()) {
+        for (Map.Entry<Socket, User> entry : Server.map.entrySet()) {
+            if (entry.getValue().getUsername() == user.getUsername()) {
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * 用户登出，从对应socket的value中删除
+     */
+    private static void deleteFromSocket(Socket socket) {
+        for (Map.Entry<Socket, User> entry : Server.map.entrySet()) {
+            if (entry.getKey() == socket) {
+                entry.setValue(new User());
+            }
+        }
+    }
+
 }

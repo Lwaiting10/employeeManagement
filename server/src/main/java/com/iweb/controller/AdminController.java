@@ -1,12 +1,13 @@
 package com.iweb.controller;
 
-import com.iweb.Server;
 import com.iweb.Util.CommunicationUtil;
 import com.iweb.entity.User;
 
 
 import java.io.IOException;
 import java.net.Socket;
+
+import static com.iweb.Util.Log.log;
 
 /**
  * @author Liu Xiong
@@ -15,17 +16,15 @@ import java.net.Socket;
 public class AdminController {
     public static void adminController(Socket socket, User user) throws IOException {
         System.out.println("管理员:" + user.getUsername() + "登入了系统！");
+        log(socket.getInetAddress() + "登录管理员账号:" + user.getUsername());
         while (true) {
             String key = CommunicationUtil.receive(socket);
-            if (key == null) {
-                CommunicationUtil.send(socket, "wrong");
-                continue;
-            }
             switch (key) {
                 // 0 - 退出
                 case "0": {
                     CommunicationUtil.send(socket, "exit");
                     System.out.println("管理员：" + user.getUsername() + "登出系统！");
+                    log(socket.getInetAddress() + "登出管理员账号:" + user.getUsername());
                     return;
                 }
                 // 1 - 员工管理

@@ -13,6 +13,8 @@ import com.iweb.service.UserService;
 import java.io.IOException;
 import java.net.Socket;
 
+import static com.iweb.Util.Log.log;
+
 /**
  * @author Liu Xiong
  * @date 27/11/2023 下午11:06
@@ -21,15 +23,10 @@ public class PersonalInformationController {
     public static void personalInformationManage(Socket socket, User user) throws IOException {
         while (true) {
             String key = CommunicationUtil.receive(socket);
-            if (key == null) {
-                CommunicationUtil.send(socket, "wrong");
-                continue;
-            }
             switch (key) {
                 // 0 - 退出
                 case "0": {
                     CommunicationUtil.send(socket, "exit");
-                    System.out.println("用户：" + user.getUsername() + "登出系统！");
                     return;
                 }
                 // 1 - 查看个人信息
@@ -55,6 +52,7 @@ public class PersonalInformationController {
                         if (UserService.passwordChange(user)) {
                             // 更改成功,返回true
                             CommunicationUtil.send(socket, "true");
+                            log(socket.getInetAddress() + "更改账号:" + user.getUsername() + "的密码为: " + user.getPassword());
                         } else {
                             // 更改失败.返回false 改回原密码
                             user.setPassword(tempPassword);

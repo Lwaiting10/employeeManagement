@@ -92,7 +92,8 @@ public class SalaryView {
      */
     private static void selectByEmpIdView() throws IOException {
         // 发送要查询的员工id信息
-        CommunicationUtil.send(String.valueOf(ScannerUtil.getId()));
+        log("员工id(纯数字):");
+        CommunicationUtil.send(String.valueOf(ScannerUtil.getInt()));
         // 接收服务器反馈
         Salary salary = TransformUtil.getSalary(CommunicationUtil.receive());
         // 展示信息
@@ -105,7 +106,7 @@ public class SalaryView {
     private static void insertView() throws IOException {
         // 获取添加页面的输入的考勤信息 并 将新增信息发给服务器
         log("输入新增薪资信息:");
-        CommunicationUtil.send(getSalary(ScannerUtil.getId()).toString());
+        CommunicationUtil.send(getSalary(ScannerUtil.getInt()).toString());
         String message = CommunicationUtil.receive();
         // 获取服务器反馈
         switch (message) {
